@@ -23,6 +23,9 @@ O GenAI Genera e uma plataforma web que transforma relatorios geneticos complexo
 
 ---
 
+## Pipeline da Solucao
+
+```text
 Pipeline da Solucao/
 ├── [ PDF Upload ]
 ├── [ Extracao de Texto ] ── (pdfplumber)
