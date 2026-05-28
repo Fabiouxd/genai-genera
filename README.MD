@@ -1,116 +1,104 @@
-🧬 GenAI Genera
-Transformando relatórios genéticos em conversas inteligentes
+# GenAI Genera — Interprete Inteligente de Relatorios Geneticos
 
-Projeto acadêmico desenvolvido para o Challenge Dasa + Genera — FIAP 2026
+Challenge Dasa + Genera — FIAP 2026
 
+Grupo: Fabio Mendes, Bernardo Rupolo, Marcos Vinicius dos Santos Morgado, Leonardo Magalhaes
 
-O Problema
-Você já recebeu um resultado de exame e não entendeu nada?
-Agora imagina receber um relatório genético de 40 páginas com frases como:
-"Polimorfismo rs429358 no gene APOE — alelo ε4 detectado."
-É exatamente isso que acontece com milhares de pacientes da Genera (Dasa) todos os anos. O relatório chega, vai para a gaveta, e nenhuma mudança de hábito acontece — porque ninguém conseguiu entender o que estava escrito.
-Esse é o problema que o GenAI Genera resolve.
+--
 
-A Solução
-O GenAI Genera transforma qualquer relatório genético em PDF em uma conversa inteligente. O paciente faz o upload do seu relatório e em minutos pode:
+## O Problema
 
-📋 Ver um resumo em linguagem humana do que o relatório diz
-🎯 Visualizar seus principais riscos organizados por prioridade
-💬 Conversar com uma IA que conhece o seu relatório específico
-🏃 Receber recomendações práticas para o dia a dia
+O Genera (Dasa) entrega ao paciente um relatorio genetico em PDF com dezenas de paginas repletas de termos extremamente tecnicos, como: "Polimorfismo rs429358 no gene APOE — alelo e4 detectado". Para um paciente comum, esse documento e incompreensivel. O resultado pratico e que o PDF vai para a gaveta, nenhuma mudanca de habito preventivo acontece e o valor do exame e desperdicado. O problema nao esta no conteudo — esta na ausencia de uma camada inteligente que o traduza para o paciente de forma humana e acionavel.
 
-Sem jargão médico. Sem ansiedade desnecessária. Com informação de verdade.
+--
 
-Como Funciona
-📄 PDF Upload
-     ↓
-📝 Extração de texto (pdfplumber)
-     ↓
-🧠 Estruturação em JSON (Claude AI)
-     ↓
-🔢 Geração de Embeddings (Voyage AI)
-     ↓
-🗄️ Armazenamento vetorial (Supabase + pgvector)
-     ↓
-💬 Usuário faz uma pergunta
-     ↓
-🔍 Busca semântica nos chunks do relatório
-     ↓
-✨ Claude responde com contexto real do relatório
-     ↓
-🖥️ Resposta aparece no chatbot (Next.js)
+## A Solucao
 
-Stack de Tecnologias
-CamadaTecnologiaPor quê?BackendPython + FastAPIEcossistema mais rico para IA/MLExtração de PDFpdfplumberPreserva estrutura de texto e tabelasIA / LLMClaude Haiku (Anthropic)Precisão em textos médicos, custo acessívelEmbeddingsVoyage AI (voyage-3-lite)Parceiro oficial da Anthropic, gratuitoBanco de dadosSupabase + pgvectorVetores e SQL no mesmo lugar, sem servidorFrontendNext.js 14 + Tailwind CSSPerformance, deploy fácil, visual moderno
+O GenAI Genera e uma plataforma web que transforma relatorios geneticos complexos em uma experiencia interativa, segura e totalmente acessivel. Ao realizar o upload do arquivo PDF, o paciente consegue:
 
-Telas do Sistema
-Upload
-Tela inicial com área de drag-and-drop. Arraste seu PDF e aguarde o processamento.
-O sistema extrai o texto, analisa com IA e gera os embeddings automaticamente.
-Dashboard
-Cards coloridos organizados por nível de risco:
+* Resumo Simplificado: Traducao dos termos tecnicos para uma linguagem leiga e direta.
+* Dashboard de Riscos: Visualizacao dos principais riscos geneticos organizados por prioridade.
+* Chatbot Especialista (RAG): Uma IA contextualizada que responde duvidas baseando-se estritamente no relatorio do usuario.
+* Prevencao Personalizada: Recomendacoes de habitos e proximos passos focados em bem-estar e saude preventiva.
 
-🔴 Risco Alto — requer atenção imediata
-🟡 Risco Médio — monitorar e agir
-🟢 Risco Baixo — manter acompanhamento
+--
 
-Clique em qualquer card para ver detalhes e recomendações específicas.
-Chatbot
-Interface de chat com a IA. Perguntas sugeridas para quem não sabe por onde começar.
-A IA responde baseada exclusivamente no seu relatório — sem respostas genéricas.
+## Pipeline da Solucao
 
-Como Rodar Localmente
-Pré-requisitos
+[ PDF Upload ] 
+       │
+       ▼
+[ Extracao de Texto ] ──> (pdfplumber)
+       │
+       ▼
+[ Estruturacao em JSON ] ──> (Claude AI)
+       │
+       ▼
+[ Geracao de Embeddings ] ──> (Voyage AI: voyage-3-lite)
+       │
+       ▼
+[ Armazenamento Vetorial ] ──> (Supabase + pgvector)
+       │
+ ┌─────┴────────────────────────┐
+ │ Pergunta do Usuario          │
+ │     │                        │
+ │     ▼                        │
+ │ [ Busca Semantica ]          │
+ │     │                        │
+ │     ▼                        │
+ │ [ Resposta Contextualizada ] ──> (Claude Haiku) ──> [ Interface Next.js ]
+ └──────────────────────────────┘
 
-Python 3.11+
-Node.js 18+
-Conta no Supabase (gratuito)
-Chave de API da Anthropic
-Chave de API do Voyage AI
+--
 
-Backend
-bashcd backend
-python -m venv venv
-venv\Scripts\activate        # Windows
-# source venv/bin/activate   # Mac/Linux
-pip install -r requirements.txt
-cp .env.example .env         # Preencha com suas chaves
-uvicorn main:app --reload
-API rodando em: http://localhost:8000
-Documentação interativa: http://localhost:8000/docs
-Banco de Dados (Supabase)
-No SQL Editor do Supabase, execute o script em /backend/setup_banco.sql para criar as tabelas e a função de busca semântica.
-Frontend
-bashcd frontend
-npm install
-npm run dev
-Acesse: http://localhost:3000
+## Arquitetura de IA — Sistema RAG
 
-Estrutura do Projeto
+A tecnica central do projeto e o RAG (Retrieval-Augmented Generation), que garante que as respostas do chatbot sejam sempre fundamentadas nos dados reais do relatorio do paciente, mitigando o risco de alucinacoes da IA.
+
+* Como Funciona: O relatorio processado e dividido em chunks (trechos) semanticos. Cada chunk e convertido em um vetor numerico (embedding) de 512 dimensoes pelo Voyage AI e armazenado no Supabase via extensao pgvector. Quando o usuario interage com o chat, a pergunta tambem e vetorizada. O sistema realiza uma busca por similaridade vetorial e recupera os 5 trechos mais relevantes do relatorio. Esses trechos sao injetados como contexto junto a pergunta para o Claude, que gera a resposta final.
+
+* Componentes de Tecnologia: O modelo de linguagem utilizado e o Claude Haiku (Anthropic), escolhido pela alta precisao na interpretacao de textos medicos, excelente aderencia a system prompts restritivos e custo-beneficio ideal para escala academico. O modelo de embeddings e o voyage-3-lite (Voyage AI), parceiro oficial da Anthropic, otimizado para recuperacao de texto e com otima performance em lingua portuguesa.
+
+* Engenharia de Prompts e Guardrails: O system prompt do agente instrui o Claude a responder exclusivamente com base nos trechos fornecidos do relatorio, nunca emitir diagnosticos medicos definitivos, nunca prescrever medicamentos ou dosagens, utilizar uma linguagem empatica e acessivel, e incluir obrigatoriamente a recomendacao de consulta medica para decisoes clinicas.
+
+--
+
+## Telas do Sistema
+
+* Upload: Pagina inicial com area de drag-and-drop com feedback visual do processamento em tempo real.
+* Dashboard de Riscos: Cards interativos organizados por nivel de criticidade (Alto, Medio, Baixo), resumo executivo e modais detalhados com recomendacoes especificas.
+* Chatbot: Interface limpa de conversacao contendo sugestoes de perguntas frequentes baseadas no arquivo e um disclaimer medico fixo no rodape.
+
+--
+
+## Estrutura do Projeto
+
 genai-genera/
 ├── backend/
-│   ├── main.py                 # API FastAPI — endpoints principais
-│   ├── pdf_extractor.py        # Extração de texto do PDF
-│   ├── json_structurer.py      # Claude estrutura os dados em JSON
-│   ├── embedding_service.py    # Voyage AI gera e salva embeddings
-│   ├── rag_service.py          # Busca semântica + resposta com RAG
-│   ├── requirements.txt        # Dependências Python
-│   └── .env.example            # Modelo de variáveis de ambiente
+│   ├── main.py                 # API FastAPI — Endpoints principais
+│   ├── pdf_extractor.py        # Extracao de texto bruto do PDF
+│   ├── json_structurer.py      # Claude estruturando a massa de dados em JSON
+│   ├── embedding_service.py    # Integracao com Voyage AI e persistencia
+│   ├── rag_service.py          # Mecanismo de busca semantica e orquestracao do LLM
+│   ├── requirements.txt        # Dependencias Python
+│   └── .env.example            # Modelo de variaveis de ambiente do backend
 └── frontend/
     ├── app/
-    │   ├── page.tsx            # Tela de upload
+    │   ├── page.tsx            # Tela de upload (Home)
     │   ├── dashboard/
-    │   │   └── page.tsx        # Dashboard de riscos
+    │   │   └── page.tsx        # Dashboard visual de riscos
     │   └── chat/
-    │       └── page.tsx        # Chatbot
+    │       └── page.tsx        # Interface do Chatbot
     └── lib/
-        └── api.ts              # Funções para consumir a API
+        └── api.ts              # Cliente de consumo da API FastAPI
 
-Exemplo de JSON Gerado
-Após o processamento do PDF, o sistema gera um JSON estruturado assim:
-json{
+--
+
+## Exemplo de Payload JSON Estruturado
+
+{
   "paciente": {
-    "nome": "João Silva",
+    "nome": "Joao Silva",
     "data_exame": "2024-11-20"
   },
   "predisposicoes": [
@@ -118,51 +106,60 @@ json{
       "condicao": "Dislipidemia e Risco Cardiovascular",
       "risco": "medio",
       "gene": "APOE",
-      "variante": "ε4",
-      "explicacao_simples": "Seus níveis de colesterol LDL e triglicérides estão elevados. Isso aumenta o risco de problemas no coração e vasos sanguíneos.",
-      "recomendacao": "Reduzir gorduras saturadas, praticar exercícios e consultar um cardiologista."
+      "variante": "e4",
+      "explicacao_simples": "Seus niveis de colesterol LDL e triglicerides tendem a ser mais elevados, aumentando a atencao necessaria com a saude do coracao.",
+      "recomendacao": "Reduzir consumo de gorduras saturadas, praticar exercicios aerobicos e consultar um cardiologista."
     }
   ],
   "recomendacoes_gerais": [
-    "Consultar cardiologista para avaliação completa",
-    "Repetir exames de colesterol em 3 meses",
-    "Praticar 150 minutos de exercício por semana"
+    "Consultar cardiologista para avaliacao preventiva completa",
+    "Realizar exames laboratoriais de acompanhamento de lipidograma"
   ],
-  "resumo_executivo": "Relatório com 3 pontos de atenção principais..."
+  "resumo_executivo": "O relatorio apresenta padrao de normalidade para a maior parte dos biomarcadores, com 1 ponto de atencao moderada voltado ao perfil cardiovascular."
 }
 
-Segurança e LGPD
-Dados genéticos são classificados como dados sensíveis pelo Art. 5º da LGPD.
-O GenAI Genera trata isso com seriedade:
+--
 
-🔐 Comunicação criptografada via HTTPS
-🎭 PDFs deletados do servidor após o processamento
-⏰ Dados retidos por 90 dias com opção de exclusão
-📝 Consentimento explícito solicitado antes do upload
-🚫 Dados nunca usados para treinar modelos
+## Seguranca e LGPD
 
+Dados geneticos sao estritamente classificados como dados sensiveis pelo Art. 5 da LGPD. O projeto adota as seguintes premissas de privacidade:
 
-Disclaimer: As informações geradas têm caráter educativo e não substituem consulta com médico ou profissional de saúde qualificado.
+* Comunicacao criptografada via HTTPS em todo o trafego de dados.
+* PDFs deletados do servidor imediatamente apos a conclusao do processamento.
+* Dados estruturados mantidos por 90 dias, com funcionalidade de exclusao imediata sob demanda do usuario.
+* Consentimento explicito, livre e esclarecido solicitado obrigatoriamente antes do upload do arquivo.
+* Dados de relatorios nunca sao enviados ou compartilhados para fins de treinamento de modelos publicos da Anthropic ou Voyage.
+* Disclaimer: As informacoes geradas por esta plataforma tem carater exclusivamente educativo e de orientacao preventiva, nao substituindo em hipotese alguma o diagnostico, parecer ou acompanhamento de profissionais medicos qualificados.
 
+--
 
-A Jornada de Desenvolvimento
-Construir esse projeto não foi um caminho reto. Houve alguns obstáculos que vale registrar:
-APIs gratuitas e seus limites: Tentamos usar Gemini e OpenAI nos planos gratuitos — ambos retornaram cota zerada. No final, optamos pela Anthropic para a IA principal e Voyage AI para embeddings, que funcionou perfeitamente.
-Rate limiting do Voyage AI: Sem cartão cadastrado, o plano gratuito limita a 3 requisições por minuto. Resolvemos com um time.sleep(20) entre os chunks — não elegante, mas funcional para desenvolvimento.
-pgvector e dimensões: Trocamos de API de embeddings três vezes durante o desenvolvimento (OpenAI → Gemini → Voyage AI), e cada uma tem dimensões diferentes (1536, 768, 512). Cada troca exigiu recriar a tabela no banco. Lição aprendida: definir a stack de embeddings antes de começar.
-RLS do Supabase: O Row Level Security bloqueia inserções por padrão. Custou alguns minutos de depuração até entender que era uma questão de permissão, não de código.
-Cada um desses problemas virou aprendizado real sobre como sistemas de IA funcionam em produção.
+## Como Rodar Localmente
 
-Próximos Passos
+* Pre-requisitos: Python 3.11+, Node.js 18+, instancia no Supabase com pgvector ativa, chave de API da Anthropic e chave de API do Voyage AI.
 
- Autenticação de usuários com histórico de relatórios
- Suporte a múltiplos PDFs por paciente
- Modo médico com visão técnica avançada
- Deploy em produção (Vercel + Railway)
- Integração com prontuário eletrônico (padrão FHIR)
- App mobile (React Native)
- Suporte a relatórios de outros laboratórios
+* Configurando o Banco de Dados: No SQL Editor do seu projeto Supabase, execute o script localizado em /backend/setup_banco.sql para criar as tabelas e a funcao de calculo de distancia vetorial.
 
+* Configurando o Backend (FastAPI):
+cd backend
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+uvicorn main:app --reload
+API disponivel em http://localhost:8000 e documentacao em http://localhost:8000/docs
 
-Time
-FABIO MENDES, BERNANRDO RUPOLO, MARCOS VINICIUS DOS SANTOS MORGADO, LEONARDO MAGALHAES
+* Configurando o Frontend (Next.js):
+cd frontend
+npm install
+npm run dev
+Aplicacao disponivel em http://localhost:3000
+
+--
+
+## Proximos Passos
+
+* Citacao de Fontes: Exibicao dos trechos exatos do PDF original que embasaram a resposta gerada pela IA.
+* Autenticacao Segura: Login de usuarios com historico criptografado de relatorios anteriores.
+* Deploy Multi-Cloud: Publicacao em ambiente de producao com Vercel e Railway.
+* Historico Comparativo: Suporte para multiplos relatorios e exames sequenciais por paciente.
+* Modo Medico: Chave de visualizacao tecnica avancada para auxiliar profissionais de saude em consultas.
