@@ -23,31 +23,15 @@ O GenAI Genera e uma plataforma web que transforma relatorios geneticos complexo
 
 ---
 
-## Pipeline da Solucao
-
-[ PDF Upload ] 
-       │
-       ▼
-[ Extracao de Texto ] ──> (pdfplumber)
-       │
-       ▼
-[ Estruturacao em JSON ] ──> (Claude AI)
-       │
-       ▼
-[ Geracao de Embeddings ] ──> (Voyage AI: voyage-3-lite)
-       │
-       ▼
-[ Armazenamento Vetorial ] ──> (Supabase + pgvector)
-       │
- ┌─────┴────────────────────────┐
- │ Pergunta do Usuario          │
- │     │                        │
- │     ▼                        │
- │ [ Busca Semantica ]          │
- │     │                        │
- │     ▼                        │
- │ [ Resposta Contextualizada ] ──> (Claude Haiku) ──> [ Interface Next.js ]
- └──────────────────────────────┘
+Pipeline da Solucao/
+├── [ PDF Upload ]
+├── [ Extracao de Texto ] ── (pdfplumber)
+├── [ Estruturacao em JSON ] ── (Claude AI)
+├── [ Geracao de Embeddings ] ── (Voyage AI: voyage-3-lite)
+├── [ Armazenamento Vetorial ] ── (Supabase + pgvector)
+└── [ Pergunta do Usuario ]
+    └── [ Busca Semantica ]
+        └── [ Resposta Contextualizada ] ── (Claude Haiku) ── [ Interface Next.js ]
 
 ---
 
@@ -92,3 +76,73 @@ genai-genera/
     │       └── page.tsx        # Interface do Chatbot
     └── lib/
         └── api.ts              # Cliente de consumo da API FastAPI
+--
+
+## Exemplo de Payload JSON Estruturado
+
+{
+  "paciente": {
+    "nome": "Joao Silva",
+    "data_exame": "2024-11-20"
+  },
+  "predisposicoes": [
+    {
+      "condicao": "Dislipidemia e Risco Cardiovascular",
+      "risco": "medio",
+      "gene": "APOE",
+      "variante": "e4",
+      "explicacao_simples": "Seus niveis de colesterol LDL e triglicerides tendem a ser mais elevados, aumentando a atencao necessaria com a saude do coracao.",
+      "recomendacao": "Reduzir consumo de gorduras saturadas, praticar exercicios aerobicos e consultar um cardiologista."
+    }
+  ],
+  "recomendacoes_gerais": [
+    "Consultar cardiologista para avaliacao preventiva completa",
+    "Realizar exames laboratoriais de acompanhamento de lipidograma"
+  ],
+  "resumo_executivo": "O relatorio apresenta padrao de normalidade para a maior parte dos biomarcadores, com 1 ponto de atencao moderada voltado ao perfil cardiovascular."
+}
+
+--
+
+## Seguranca e LGPD
+
+Dados geneticos sao estritamente classificados como dados sensiveis pelo Art. 5 da LGPD. O projeto adota as seguintes premissas de privacidade:
+
+* Comunicacao criptografada via HTTPS em todo o trafego de dados.
+* PDFs deletados do servidor imediatamente apos a conclusao do processamento.
+* Dados estruturados mantidos por 90 dias, com funcionalidade de exclusao imediata sob demanda do usuario.
+* Consentimento explicito, livre e esclarecido solicitado obrigatoriamente antes do upload do arquivo.
+* Dados de relatorios nunca sao enviados ou compartilhados para fins de treinamento de modelos publicos da Anthropic ou Voyage.
+* Disclaimer: As informacoes geradas por esta plataforma tem carater exclusivamente educativo e de orientacao preventiva, nao substituindo em hipotese alguma o diagnostico, parecer ou acompanhamento de profissionais medicos qualificados.
+
+--
+
+## Como Rodar Localmente
+
+* Pre-requisitos: Python 3.11+, Node.js 18+, instancia no Supabase com pgvector ativa, chave de API da Anthropic e chave de API do Voyage AI.
+
+* Configurando o Banco de Dados: No SQL Editor do seu projeto Supabase, execute o script localizado em /backend/setup_banco.sql para criar as tabelas e a funcao de calculo de distancia vetorial.
+
+* Configurando o Backend (FastAPI):
+cd backend
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+uvicorn main:app --reload
+API disponivel em http://localhost:8000 e documentacao em http://localhost:8000/docs
+
+* Configurando o Frontend (Next.js):
+cd frontend
+npm install
+npm run dev
+Aplicacao disponivel em http://localhost:3000
+
+--
+
+## Proximos Passos
+
+* Citacao de Fontes: Exibicao dos trechos exatos do PDF original que embasaram a resposta gerada pela IA.
+* Autenticacao Segura: Login de usuarios com historico criptografado de relatorios anteriores.
+* Deploy Multi-Cloud: Publicacao em ambiente de producao com Vercel e Railway.
+* Historico Comparativo: Suporte para multiplos relatorios e exames sequenciais por paciente.
